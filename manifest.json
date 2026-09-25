@@ -1,16 +1,19 @@
 {
-  "id": "battle_effect_colors",
-  "name": "Battle Effect Colors",
+  "id": "battle_effect_colors_national_dex",
+  "name": "Battle Effect Colors - National Dex Support",
   "version": "1.0.0",
   "api": 2,
   "entry": "main.lua",
   "profile": "content",
   "category": "GRAPHICS",
   "game_version": ">=0.0.0-0 <2.0.0",
-  "priority": 100,
-  "dependencies": [],
+  "priority": 110,
+  "dependencies": [
+    "battle_effect_colors",
+    "national_dex#sanjinpepic/gen1recomp-national-dex"
+  ],
   "optional_dependencies": [],
   "conflicts": [],
   "permissions": ["engine_internals"],
-  "description": "Recolors Gen 1 battle move-animation sprites by attack theme instead of leaving them monochrome."
+  "description": "Gives National Dex moves a battle animation by reusing the closest existing Gen 1 effect for their move type."
 }
