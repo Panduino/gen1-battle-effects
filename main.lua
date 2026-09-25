@@ -211,15 +211,57 @@ local ELEMENTAL_NAME_ANIMS = {
   FAIRY = "CONFUSION"
 }
 
+local STATUS_ANIMS = {
+  BURN = "EMBER",
+  FREEZE = "ICE_BEAM",
+  PARALYZE = "THUNDER_WAVE",
+  POISON = "POISON_STING",
+  SLEEP = "HYPNOSIS",
+  CONFUSION = "CONFUSE_RAY"
+}
+
+local function statusAnimation(move)
+  local effect = tostring(move and move.effect or ""):upper()
+  if effect == "BURN_SIDE_EFFECT1" or effect == "BURN_SIDE_EFFECT2" then
+    return STATUS_ANIMS.BURN
+  end
+  if effect == "FREEZE_SIDE_EFFECT1" then
+    return STATUS_ANIMS.FREEZE
+  end
+  if effect == "PARALYZE_EFFECT" or effect == "PARALYZE_SIDE_EFFECT1"
+      or effect == "PARALYZE_SIDE_EFFECT2" then
+    return STATUS_ANIMS.PARALYZE
+  end
+  if effect == "POISON_EFFECT" or effect == "POISON_SIDE_EFFECT1"
+      or effect == "POISON_SIDE_EFFECT2" then
+    return STATUS_ANIMS.POISON
+  end
+  if effect == "SLEEP_EFFECT" then
+    return STATUS_ANIMS.SLEEP
+  end
+  if effect == "CONFUSION_EFFECT" or effect == "CONFUSION_SIDE_EFFECT" then
+    return STATUS_ANIMS.CONFUSION
+  end
+  return nil
+end
+
 local function animationForMove(move)
   if not move then return nil end
 
   local name = tostring(move.name or move.id or ""):upper():gsub("[^A-Z]", "")
+  local isDamaging = (tonumber(move.power) or 0) > 0
 
-  -- An explicit elemental word in the move's name takes priority over the
-  -- mechanical/visual family. For example, Ice Beam and Fire Punch must use
-  -- the Ice and Fire palettes even though "Beam" and "Punch" have their own
-  -- animation families.
+  -- A non-damaging move should never receive a physical/special attack
+  -- animation merely because its type is elemental. Status-inflicting moves
+  -- are the exception: use the visual associated with the status itself.
+  if not isDamaging then
+    return statusAnimation(move)
+  end
+
+  -- For damaging moves, an explicit elemental word in the name takes
+  -- priority over the mechanical/visual family. For example, Ice Beam and
+  -- Fire Punch must use the Ice and Fire palettes even though "Beam" and
+  -- "Punch" have their own animation families.
   local elementalWords = {
     "FIRE","FLAME","WATER","AQUA","ELECTRIC","THUNDER","GRASS","LEAF",
     "ICE","FROST","POISON","ACID","GROUND","EARTH","ROCK","STONE","BUG",
