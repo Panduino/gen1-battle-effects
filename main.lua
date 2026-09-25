@@ -214,7 +214,7 @@ local ELEMENTAL_NAME_ANIMS = {
 local STATUS_ANIMS = {
   -- Gen 1 has a dedicated non-attack Ice/field animation: MIST.
   -- Use it for non-damaging Ice effects instead of reusing ICE_BEAM.
-  AURORAVEIL = "MIST",
+  AURORAVEIL = "BARRIER",
   HAIL = "MIST",
   HAZE = "MIST",
   MIST = "MIST",
