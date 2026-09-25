@@ -2,7 +2,7 @@
 
 A Gen 1 Recomp mod that recolors battle move-effect sprites.
 
-The original Gen 1 battle effects use a monochrome sprite layer. This mod replaces the three opaque animation shades with themed RGB palettes while leaving unlisted animations unchanged.
+The original Gen 1 battle effects use a monochrome sprite layer. This mod replaces the animation colors with themed four-color palettes while leaving unlisted animations unchanged. Each palette is limited to four colors to preserve a 2bpp Game Boy Color / Game Boy Advance-era appearance.
 
 ## Installation
 
