@@ -22,9 +22,6 @@ The companion distinguishes common visual families instead of putting every move
 Elemental moves likewise prefer a visually similar Gen 1 animation: Fire uses Ember/Flamethrower/Fire Spin/Fire Blast, Water uses Water Gun/Surf/Hydro Pump/Bubble, Electric uses Thunder Shock/Thunderbolt/Thunder Wave/Thunder, and so on.
 
 Moves that already have a native Gen 1 animation are left completely unchanged. This means the companion only supplies fallbacks for National Dex moves that actually need one.
-
-Because the companion redirects the move to an existing animation, the main Battle Effect Colors mod also automatically supplies the corresponding 4-color/2bpp palette.
-
 ## Installation
 
 Install and enable:
@@ -34,7 +31,3 @@ Install and enable:
 3. Battle Effect Colors - National Dex Support
 
 This branch is intended to be used as a separate companion mod rather than replacing the main Battle Effect Colors mod.
-
-### Non-damaging move rule
-
-National Dex moves with zero power no longer receive physical/special attack animations. This includes type-based moves such as Aurora Veil, Hail, Haze, Mist, and Snowscape. The exception is moves whose effect directly inflicts a major status condition: Burn, Freeze, Paralysis, Poison, Sleep, or Confusion use the corresponding status visual instead.
