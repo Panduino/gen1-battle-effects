@@ -3,7 +3,7 @@ local BattleState = require("src.battle.BattleState")
 -- Battle-effect palettes use exactly four colors, matching the 2bpp limit
 -- of Game Boy / Game Boy Color-era sprite graphics.
 local PALETTES = {
-  FIRE={{255,255,120},{255,170,0},{245,55,0},{120,10,5}},
+  FIRE={{255,190,40},{255,95,0},{220,30,0},{100,5,5}},
   WATER={{150,245,255},{0,190,235},{0,85,210},{0,20,110}},
   ELECTRIC={{255,255,100},{255,220,0},{255,145,0},{130,70,0}},
   GRASS={{190,255,80},{80,210,25},{20,145,25},{5,70,10}},
