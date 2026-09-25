@@ -181,19 +181,65 @@ local MOVE_ANIMS = {
   MOONLIGHT="RECOVER", BABYDOLLEYES="GROWL", CHARM="GROWL", SWEETKISS="SING"
 }
 
+local ELEMENTAL_NAME_ANIMS = {
+  FIRE = "EMBER",
+  FLAME = "EMBER",
+  WATER = "WATER_GUN",
+  AQUA = "WATER_GUN",
+  ELECTRIC = "THUNDER_SHOCK",
+  THUNDER = "THUNDER_SHOCK",
+  GRASS = "RAZOR_LEAF",
+  LEAF = "RAZOR_LEAF",
+  ICE = "ICE_BEAM",
+  FROST = "ICE_BEAM",
+  POISON = "POISON_STING",
+  ACID = "ACID",
+  GROUND = "SAND_ATTACK",
+  EARTH = "EARTHQUAKE",
+  ROCK = "ROCK_THROW",
+  STONE = "ROCK_THROW",
+  BUG = "STRING_SHOT",
+  FLYING = "GUST",
+  AIR = "GUST",
+  PSYCHIC = "CONFUSION",
+  PSY = "CONFUSION",
+  GHOST = "LICK",
+  SHADOW = "NIGHT_SHADE",
+  DRAGON = "DRAGON_RAGE",
+  DARK = "LICK",
+  STEEL = "ROCK_THROW",
+  FAIRY = "CONFUSION"
+}
+
 local function animationForMove(move)
   if not move then return nil end
+
+  local name = tostring(move.name or move.id or ""):upper():gsub("[^A-Z]", "")
+
+  -- An explicit elemental word in the move's name takes priority over the
+  -- mechanical/visual family. For example, Ice Beam and Fire Punch must use
+  -- the Ice and Fire palettes even though "Beam" and "Punch" have their own
+  -- animation families.
+  local elementalWords = {
+    "FIRE","FLAME","WATER","AQUA","ELECTRIC","THUNDER","GRASS","LEAF",
+    "ICE","FROST","POISON","ACID","GROUND","EARTH","ROCK","STONE","BUG",
+    "FLYING","AIR","PSYCHIC","PSY","GHOST","SHADOW","DRAGON","DARK",
+    "STEEL","FAIRY"
+  }
+  for _, word in ipairs(elementalWords) do
+    if name:find(word, 1, true) then
+      return ELEMENTAL_NAME_ANIMS[word]
+    end
+  end
+
   if move.id and MOVE_ANIMS[move.id] then return MOVE_ANIMS[move.id] end
 
-  -- Name-based fallback catches future National Dex additions without
-  -- throwing them back into a completely generic type-only animation.
-  local name = tostring(move.name or move.id or ""):upper():gsub("[^A-Z]", "")
+  -- Semantic fallback for future National Dex additions.
   if name:find("SLASH") or name:find("SCISSOR") then return "SLASH" end
   if name:find("PUNCH") then return "MEGA_PUNCH" end
   if name:find("KICK") then return "MEGA_KICK" end
   if name:find("BITE") or name:find("FANG") then return "BITE" end
-  if name:find("BEAM") then return "HYPER_BEAM" end
-  if name:find("BLAST") then return "HYPER_BEAM" end
+  if name:find("BEAM") or name:find("BLAST") then return "HYPER_BEAM" end
   if name:find("TACKLE") or name:find("SLAM") then return "TACKLE" end
   return TYPE_ANIMS[move.type]
 end
@@ -232,7 +278,7 @@ return function(mod)
       return
     end
 
-    local fallback = TYPE_ANIMS[moveType]
+    local fallback = animationForMove(move)
     local row = self.moveAnimRow
 
     -- Charge/failure paths may intentionally cancel the normal move animation.
