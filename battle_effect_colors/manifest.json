@@ -1,0 +1,16 @@
+{
+  "id": "battle_effect_colors",
+  "name": "Battle Effect Colors",
+  "version": "1.0.0",
+  "api": 2,
+  "entry": "main.lua",
+  "profile": "content",
+  "category": "GRAPHICS",
+  "game_version": ">=0.0.0-0 <2.0.0",
+  "priority": 100,
+  "dependencies": [],
+  "optional_dependencies": [],
+  "conflicts": [],
+  "permissions": ["engine_internals"],
+  "description": "Recolors Gen 1 battle move-animation sprites by attack theme instead of leaving them monochrome."
+}
