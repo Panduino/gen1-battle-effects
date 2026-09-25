@@ -1,62 +1,77 @@
 local BattleState = require("src.battle.BattleState")
 
--- Battle-effect palettes use exactly four colors, matching the 2bpp limit
--- of Game Boy / Game Boy Color-era sprite graphics.
-local PALETTES = {
-  FIRE={{255,190,40},{255,95,0},{220,30,0},{100,5,5}},
-  WATER={{150,245,255},{0,190,235},{0,85,210},{0,20,110}},
-  ELECTRIC={{255,255,100},{255,220,0},{255,145,0},{130,70,0}},
-  GRASS={{190,255,80},{80,210,25},{20,145,25},{5,70,10}},
-  ICE={{180,255,255},{50,225,255},{0,135,230},{0,55,145}},
-  PSYCHIC={{255,170,245},{255,60,200},{190,15,155},{80,0,85}},
-  POISON={{240,150,255},{175,40,235},{105,0,175},{45,0,80}},
-  GROUND={{255,235,120},{220,155,35},{145,80,15},{75,35,5}},
-  ROCK={{255,225,135},{190,140,65},{120,75,30},{60,35,15}},
-  BUG={{220,255,70},{120,220,20},{45,155,10},{15,75,5}},
-  FLYING={{180,255,255},{65,190,255},{0,105,225},{0,45,130}},
-  GHOST={{235,175,255},{170,60,245},{95,15,175},{45,0,90}},
-  DRAGON={{170,220,255},{55,145,255},{15,70,220},{5,25,115}},
-  NORMAL={{255,255,255},{190,190,190},{120,120,120},{55,55,55}}
+-- National Dex registers modern moves with their real move data, but those
+-- added moves do not have Gen 1 battle-animation programs. Reuse an existing
+-- Gen 1 animation based on the move type instead of leaving them animationless.
+local TYPE_ANIMS = {
+  NORMAL = "SCRATCH",
+  FIRE = "EMBER",
+  WATER = "WATER_GUN",
+  ELECTRIC = "THUNDER_SHOCK",
+  GRASS = "RAZOR_LEAF",
+  ICE = "ICE_BEAM",
+  FIGHTING = "SCRATCH",
+  POISON = "POISON_STING",
+  GROUND = "SAND_ATTACK",
+  FLYING = "GUST",
+  PSYCHIC = "CONFUSION",
+  BUG = "STRING_SHOT",
+  ROCK = "ROCK_THROW",
+  GHOST = "LICK",
+  DRAGON = "DRAGON_RAGE",
+
+  -- These types were not present in the original Gen 1 move-animation set.
+  -- They use the closest existing visual family until dedicated palettes/
+  -- animations are added.
+  DARK = "LICK",
+  STEEL = "ROCK_THROW",
+  FAIRY = "CONFUSION"
 }
 
-local ANIM_PALETTES = {
-  EMBER=PALETTES.FIRE,FIRE_PUNCH=PALETTES.FIRE,FIRE_BLAST=PALETTES.FIRE,FLAMETHROWER=PALETTES.FIRE,FIRE_SPIN=PALETTES.FIRE,
-  WATER_GUN=PALETTES.WATER,BUBBLE=PALETTES.WATER,BUBBLEBEAM=PALETTES.WATER,HYDRO_PUMP=PALETTES.WATER,SURF=PALETTES.WATER,SPLASH=PALETTES.WATER,CRABHAMMER=PALETTES.WATER,OCTAZOOKA=PALETTES.WATER,
-  THUNDER_SHOCK=PALETTES.ELECTRIC,THUNDERBOLT=PALETTES.ELECTRIC,THUNDER_WAVE=PALETTES.ELECTRIC,THUNDER=PALETTES.ELECTRIC,
-  ABSORB=PALETTES.GRASS,MEGA_DRAIN=PALETTES.GRASS,GROWTH=PALETTES.GRASS,RAZOR_LEAF=PALETTES.GRASS,VINE_WHIP=PALETTES.GRASS,SOLARBEAM=PALETTES.GRASS,LEECH_SEED=PALETTES.GRASS,
-  ICE_BEAM=PALETTES.ICE,BLIZZARD=PALETTES.ICE,MIST=PALETTES.ICE,
-  CONFUSION=PALETTES.PSYCHIC,PSYBEAM=PALETTES.PSYCHIC,PSYCHIC=PALETTES.PSYCHIC,HYPNOSIS=PALETTES.PSYCHIC,
-  POISON_STING=PALETTES.POISON,ACID=PALETTES.POISON,SMOG=PALETTES.POISON,SLUDGE=PALETTES.POISON,TOXIC=PALETTES.POISON,
-  SAND_ATTACK=PALETTES.GROUND,DIG=PALETTES.GROUND,EARTHQUAKE=PALETTES.GROUND,
-  ROCK_THROW=PALETTES.ROCK,ROCK_SLIDE=PALETTES.ROCK,
-  STRING_SHOT=PALETTES.BUG,LEECH_LIFE=PALETTES.BUG,TWINEEDLE=PALETTES.BUG,
-  GUST=PALETTES.FLYING,WING_ATTACK=PALETTES.FLYING,FLY=PALETTES.FLYING,PECK=PALETTES.FLYING,SKY_ATTACK=PALETTES.FLYING,
-  LICK=PALETTES.GHOST,NIGHT_SHADE=PALETTES.GHOST,CONFUSE_RAY=PALETTES.GHOST,
-  DRAGON_RAGE=PALETTES.DRAGON,
-  SCRATCH=PALETTES.NORMAL,SLASH=PALETTES.NORMAL,CUT=PALETTES.NORMAL,TACKLE=PALETTES.NORMAL,BODY_SLAM=PALETTES.NORMAL,STRENGTH=PALETTES.NORMAL
-}
-
-local function normalized(p)
-  return {
-    {p[1][1]/255,p[1][2]/255,p[1][3]/255},
-    {p[2][1]/255,p[2][2]/255,p[2][3]/255},
-    {p[3][1]/255,p[3][2]/255,p[3][3]/255},
-    {p[4][1]/255,p[4][2]/255,p[4][3]/255}
-  }
+local function hasNativeAnimation(battle, moveId)
+  local data = battle and battle.data
+  local anims = data and data.moveAnims
+  return type(anims) == "table" and anims[moveId] ~= nil
 end
 
 return function(mod)
-  if type(BattleState.animSpriteColors) ~= "function" then
-    mod.log:error("Battle Effect Colors: animSpriteColors was not found")
+  if not mod.find("battle_effect_colors") then
+    mod.log:error("Battle Effect Colors - National Dex Support requires battle_effect_colors")
     return
   end
-  if BattleState.battleEffectColorsInstalled then return end
-  local original = BattleState.animSpriteColors
-  function BattleState:animSpriteColors(sprite, px, py)
-    local palette = self.animName and ANIM_PALETTES[self.animName]
-    if palette then return normalized(palette) end
-    return original(self, sprite, px, py)
+  if not mod.find("national_dex") then
+    mod.log:error("Battle Effect Colors - National Dex Support requires national_dex")
+    return
   end
-  BattleState.battleEffectColorsInstalled = true
-  mod.log:info("Battle Effect Colors installed (2bpp / 4-color palettes)")
+
+  if BattleState.nationalDexBattleEffectAnimationsInstalled then return end
+
+  local original = BattleState.performMove
+
+  function BattleState:performMove(user, target, moveInst, isCalled)
+    local move = moveInst and self:moveDef(moveInst)
+    local moveId = move and move.id
+    local moveType = move and move.type
+
+    original(self, user, target, moveInst, isCalled)
+
+    -- Never replace an animation that the base game already supplies.
+    -- This makes the companion additive: National Dex moves get a fallback,
+    -- while the original 165 Gen 1 moves retain their authentic animations.
+    if not moveId or not moveType or hasNativeAnimation(self, moveId) then
+      return
+    end
+
+    local fallback = TYPE_ANIMS[moveType]
+    local row = self.moveAnimRow
+
+    -- Charge/failure paths may intentionally cancel the normal move animation.
+    -- Only redirect the ordinary queued move row when it is still present.
+    if fallback and row and row.anim == moveId then
+      row.anim = fallback
+    end
+  end
+
+  BattleState.nationalDexBattleEffectAnimationsInstalled = true
+  mod.log:info("National Dex battle animation fallbacks installed")
 end
