@@ -212,6 +212,13 @@ local ELEMENTAL_NAME_ANIMS = {
 }
 
 local STATUS_ANIMS = {
+  -- Gen 1 has a dedicated non-attack Ice/field animation: MIST.
+  -- Use it for non-damaging Ice effects instead of reusing ICE_BEAM.
+  AURORAVEIL = "MIST",
+  HAIL = "MIST",
+  HAZE = "MIST",
+  MIST = "MIST",
+  CHILLYRECEPTION = "MIST",
   BURN = "EMBER",
   FREEZE = "ICE_BEAM",
   PARALYZE = "THUNDER_WAVE",
@@ -254,7 +261,9 @@ local function animationForMove(move)
   -- A non-damaging move should never receive a physical/special attack
   -- animation merely because its type is elemental. Status-inflicting moves
   -- are the exception: use the visual associated with the status itself.
+  local nonDamagingAnim = STATUS_ANIMS[move.id]
   if not isDamaging then
+    if nonDamagingAnim then return nonDamagingAnim end
     return statusAnimation(move)
   end
 
