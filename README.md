@@ -34,3 +34,7 @@ Install and enable:
 3. Battle Effect Colors - National Dex Support
 
 This branch is intended to be used as a separate companion mod rather than replacing the main Battle Effect Colors mod.
+
+### Non-damaging move rule
+
+National Dex moves with zero power no longer receive physical/special attack animations. This includes type-based moves such as Aurora Veil, Hail, Haze, Mist, and Snowscape. The exception is moves whose effect directly inflicts a major status condition: Burn, Freeze, Paralysis, Poison, Sleep, or Confusion use the corresponding status visual instead.
