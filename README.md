@@ -1,9 +1,24 @@
 # Battle Effect Colors
 
-A Gen 1 Recomp mod that recolors battle move-effect sprites.
+Bring some color to Generation I battles.
 
-The original Gen 1 battle effects use a monochrome sprite layer. This mod replaces the animation colors with themed four-color palettes while leaving unlisted animations unchanged. Each palette is limited to four colors to preserve a 2bpp Game Boy Color / Game Boy Advance-era appearance.
+**Battle Effect Colors** gives the original move animations themed color palettes while keeping their classic pixel-art look intact. Fire feels hot, Water reads as blue, Ice looks cold, and physical effects gain more visual character without changing how battles play.
+
+## Features
+
+- Colorized battle effects built around each move's theme
+- Four-color palettes inspired by the Game Boy Color and Game Boy Advance era
+- Sensible handling for physical, elemental, and status effects
+- Purely visual — battle mechanics remain unchanged
+
+## Screenshots
+
+| Battle Effects | Elemental Moves | In Battle |
+| :---: | :---: | :---: |
+| _Screenshot coming soon_ | _Screenshot coming soon_ | _Screenshot coming soon_ |
 
 ## Installation
 
-Import mod zip into gen1recomp. You know what to do.
+Install **Battle Effect Colors** through G1R Deluxe's mod browser, or import the mod ZIP manually.
+
+No additional mods are required.
